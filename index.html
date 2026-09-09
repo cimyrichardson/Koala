@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Secrète : Koala & Amatus</title>
+    <style>
+        :root {
+            --primary: #2d3436;
+            --accent: #fdcb6e;
+            --accent2: #e17055;
+            --bg: #0f1115;
+            --card-bg: #1c1f26;
+            --text: #ffffff;
+            --parchment: #fcf5e3;
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
+            --radius: 16px;
+            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: var(--bg);
+            background-image: radial-gradient(circle at 20% 50%, rgba(253, 203, 110, 0.03) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 50%, rgba(225, 112, 85, 0.03) 0%, transparent 50%);
+            color: var(--text);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 520px;
+            width: 100%;
+            position: relative;
+        }
+
+        /* --- ENVELOPPE --- */
+        .envelope-wrapper {
+            perspective: 1000px;
+            margin-bottom: 40px;
+        }
+
+        .envelope {
+            background: linear-gradient(145deg, #d2a679, #b8835a);
+            padding: 40px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            border: 3px double #8a5a36;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .envelope::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .envelope:hover::after {
+            opacity: 1;
+        }
+
+        .envelope:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+
+        .envelope::before {
+            content: "✉️";
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .envelope h2 {
+            margin: 0;
+            color: #4a2c1a;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 700;
+        }
+
+        .envelope .sub {
+            color: #5c3a21;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            opacity: 0.8;
+        }
+
+        .envelope .seal {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(145deg, #d63031, #b71c1c);
+            border-radius: 50%;
+            margin: 15px auto 0 auto;
+            box-shadow: 0 4px 10px rgba(214, 48, 49, 0.4);
+            border: 2px solid #ff7675;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope:hover .seal {
+            transform: scale(1.1);
+        }
+
+        .letter-opened .envelope {
+            transform: rotateX(-180deg) scale(0.8);
+            opacity: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* --- LETTRE D'INTRODUCTION --- */
+        .letter-content {
+            display: none;
+            background: var(--parchment);
+            color: #2d3436;
+            padding: 35px 30px;
+            border-radius: var(--radius);
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.05), var(--shadow);
+            border-left: 6px solid #d63031;
+            margin-bottom: 25px;
+            animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .letter-content::before {
+            content: '✦';
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: #d63031;
+            opacity: 0.3;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .letter-content h2 {
+            font-family: Georgia, 'Times New Roman', serif;
+            text-align: center;
+            margin-top: 0;
+            color: #d63031;
+            border-bottom: 2px dashed #d63031;
+            padding-bottom: 12px;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+
+        .letter-content p {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            text-align: justify;
+            margin-bottom: 12px;
+        }
+
+        .letter-content .signature {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: #d63031;
+            border-top: 1px dashed #ddd;
+            padding-top: 15px;
+        }
+
+        /* --- BOUTON CONTINUER --- */
+        .continue-btn {
+            display: none;
+            width: 100%;
+            background: linear-gradient(145deg, var(--accent), #f0b830);
+            color: var(--bg);
+            border: none;
+            padding: 18px 20px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .continue-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .continue-btn:hover::after {
+            opacity: 1;
+        }
+
+        .continue-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(253, 203, 110, 0.4);
+        }
+
+        .continue-btn:active {
+            transform: scale(0.98);
+        }
+
+        .continue-btn.show {
+            display: block;
+            animation: pulseBtn 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseBtn {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(253, 203, 110, 0.3); }
+            50% { box-shadow: 0 0 0 15px rgba(253, 203, 110, 0); }
+        }
+
+        .continue-btn .arrow {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .continue-btn:hover .arrow {
+            transform: translateX(5px);
+        }
+
+        .letter-content.hidden {
+            display: none;
+        }
+
+        /* --- INTERFACE MISSION --- */
+        .mission-interface {
+            display: none;
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .mission-interface.visible {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HEADER --- */
+        .header {
+            text-align: center;
+            border: 2px dashed var(--accent);
+            padding: 25px 20px;
+            border-radius: var(--radius);
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(253, 203, 110, 0.05) 0%, transparent 60%);
+        }
+
+        .header h1 {
+            color: var(--accent);
+            font-size: 1.6rem;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+        }
+
+        .header .status {
+            animation: blink 1.8s infinite;
+            color: #ff7675;
+            font-weight: bold;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .header .status::before {
+            content: '● ';
+            color: #00b894;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* --- ORDRE DU JOUR --- */
+        .day-schedule {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .day-schedule h3 {
+            color: var(--accent);
+            margin-top: 0;
+            text-align: center;
+            border-bottom: 2px dashed rgba(255,255,255,0.1);
+            padding-bottom: 12px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+            border-radius: 4px;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+
+        .schedule-item:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-time {
+            color: var(--accent);
+            font-weight: bold;
+            min-width: 90px;
+            font-size: 0.85rem;
+        }
+
+        .schedule-desc {
+            color: #b2bec3;
+            text-align: right;
+            font-size: 0.85rem;
+        }
+
+        .schedule-item:last-child .schedule-desc {
+            color: var(--accent2);
+        }
+
+        /* --- ÉTAPES --- */
+        .step-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 22px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .step-card:hover {
+            border-color: rgba(253, 203, 110, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.25);
+        }
+
+        .step-card.revealed {
+            border-color: var(--accent);
+            background: rgba(253, 203, 110, 0.05);
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .step-header .step-number {
+            background: rgba(253, 203, 110, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        .step-header .step-time {
+            color: #b2bec3;
+            font-weight: normal;
+        }
+
+        .clue-box {
+            margin-top: 14px;
+            font-style: italic;
+            color: #b2bec3;
+            background: rgba(0,0,0,0.25);
+            padding: 12px 15px;
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .clue-box::before {
+            content: '🔍 ';
+        }
+
+        .secret-content {
+            display: none;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 2px dashed rgba(255,255,255,0.08);
+            animation: revealFade 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes revealFade {
+            from { opacity: 0; transform: translateY(15px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .secret-content h3 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+        }
+
+        .secret-content h3 .emoji {
+            margin-right: 6px;
+        }
+
+        .secret-content p {
+            color: #dfe6e9;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .secret-content .detail {
+            background: rgba(0,0,0,0.2);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 3px solid var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .reveal-btn {
+            width: 100%;
+            background: linear-gradient(145deg, var(--accent), #f0b830);
+            color: var(--bg);
+            border: none;
+            padding: 14px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 0.95rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reveal-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .reveal-btn:hover::after {
+            opacity: 1;
+        }
+
+        .reveal-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(253, 203, 110, 0.3);
+        }
+
+        .reveal-btn:active {
+            transform: scale(0.97);
+        }
+
+        .revealed .secret-content {
+            display: block;
+        }
+
+        .revealed .reveal-btn {
+            display: none;
+        }
+
+        .revealed .clue-box {
+            opacity: 0.6;
+            border-left-color: #00b894;
+        }
+
+        /* --- PROGRESS BAR --- */
+        .progress-container {
+            margin-bottom: 25px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 15px 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #b2bec3;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            border-radius: 4px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 480px) {
+            .envelope {
+                padding: 30px 15px;
+            }
+            .envelope::before {
+                font-size: 2.5rem;
+            }
+            .envelope h2 {
+                font-size: 0.9rem;
+            }
+            .letter-content {
+                padding: 25px 18px;
+            }
+            .letter-content p {
+                font-size: 0.95rem;
+            }
+            .header h1 {
+                font-size: 1.2rem;
+            }
+            .schedule-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .schedule-time {
+                min-width: auto;
+            }
+            .schedule-desc {
+                text-align: left;
+                font-size: 0.8rem;
+            }
+            .step-card {
+                padding: 16px;
+            }
+            .continue-btn {
+                font-size: 0.9rem;
+                padding: 14px;
+            }
+        }
+
+        /* Scrollbar personnalisée */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f0b830;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        
+        <!-- ENVELOPPE -->
+        <div class="envelope-wrapper" id="envelopeWrapper">
+            <div class="envelope" onclick="openLetter()">
+                <h2>✧ Top Secret ✧</h2>
+                <p style="color: #4a2c1a; font-size: 0.9rem; margin: 5px 0 0 0; font-weight: bold;">À l'attention de Koala & Amatus</p>
+                <p class="sub">(Cliquez pour briser le sceau)</p>
+                <div class="seal">⚜</div>
+            </div>
+        </div>
+
+        <!-- LETTRE -->
+        <div class="letter-content" id="letterContent">
+            <h2>✦ Ordre de Mission ✦</h2>
+            <p>Chère Ma Koala, Cher Amatus,</p>
+            <p>Vous lisez ceci car vos chemins se croisent demain pour une aventure hors du commun. Le protocole <strong>"Journée Parfaite"</strong> a été activé par Amatus, votre organisateur dévoué.</p>
+            <p>Rien n'a été laissé au hasard, mais tout reste à découvrir. Votre curiosité et votre complicité seront vos seules armes.</p>
+            <p>Voici l'ordre du jour de votre mission. Les détails de chaque étape sont classifiés et ne seront dévoilés qu'au moment venu.</p>
+            <div class="signature">— Amatus, L'Organisateur</div>
+        </div>
+
+        <!-- BOUTON -->
+        <button class="continue-btn" id="continueBtn" onclick="showMission()">
+            <span class="arrow">▶</span> Découvrir l'ordre du jour
+        </button>
+
+        <!-- INTERFACE MISSION -->
+        <div class="mission-interface" id="missionInterface">
+            <div class="header">
+                <h1>🐨 Opération : Demain ✨</h1>
+                <p class="status">ACCÈS AUTORISÉ — SUIVEZ LE GUIDE</p>
+            </div>
+
+            <!-- PROGRESS -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-text">
+                    <span>Progression</span>
+                    <span id="progressCount">0 / 6</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- ORDRE DU JOUR -->
+            <div class="day-schedule">
+                <h3>📋 Ordre du Jour</h3>
+                <div class="schedule-item">
+                    <span class="schedule-time">09:00</span>
+                    <span class="schedule-desc">Rencontre à Kafou Maren</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="schedule-time">09:10 - 09:45</span>
+                    <span class="schedule-desc">Faire les courses</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="schedule-time">10:00</span>
+                    <span class="schedule-desc">Début des activités — Partage & Communication</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="schedule-time">10:10 - 10:55</span>
+                    <span class="schedule-desc">🎮 Jeu</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="schedule-time">11:00 - 11:45</span>
+                    <span class="schedule-desc">💆 Soin des cheveux</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="schedule-time">11:55 - 12:30</span>
+                    <span class="schedule-desc">🍳 Cuisine & Déjeuner</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="schedule-time">13:00 - 13:30</span>
+                    <span class="schedule-desc">💃 Danse pour le 30 décembre</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="schedule-time">13:45 - 14:30</span>
+                    <span class="schedule-desc">🎬 Film</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="schedule-time">14:45 — ∞</span>
+                    <span class="schedule-desc">🌿 Libre cours — La nature décidera 😀</span>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 1 -->
+            <div class="step-card" id="step1" data-step="1">
+                <div class="step-header">
+                    <span class="step-number">ÉTAPE 01</span>
+                    <span class="step-time">09:00 - 09:45</span>
+                </div>
+                <div class="clue-box">Le point de départ. Là où les sourires commencent et où les yeux piquent encore un peu...</div>
+                <button class="reveal-btn" onclick="reveal('step1')">🔓 Révéler la mission</button>
+                <div class="secret-content">
+                    <h3><span class="emoji">🚀</span> Le Rendez-vous & Les Courses</h3>
+                    <p>Retrouvons-nous à <strong>9h00</strong> à <strong>Kafou Maren</strong> ! Après les retrouvailles, direction les marchés pour les courses du jour. Préparez-vous à une petite chasse aux trésors gustatifs.</p>
+                    <div class="detail">💡 Astuce : La liste de courses t'attend sur place !</div>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 2 -->
+            <div class="step-card" id="step2" data-step="2">
+                <div class="step-header">
+                    <span class="step-number">ÉTAPE 02</span>
+                    <span class="step-time">10:00 - 11:45</span>
+                </div>
+                <div class="clue-box">Le temps de se reconnecter, de jouer et de prendre soin de soi.</div>
+                <button class="reveal-btn" onclick="reveal('step2')">🔓 Débloquer l'indice</button>
+                <div class="secret-content">
+                    <h3><span class="emoji">💆‍♀️</span> Partage, Jeu & Soin</h3>
+                    <p>À <strong>10h00</strong>, c'est le moment de partager et de communiquer. Puis un jeu pour raviver l'esprit de compétition. Ensuite, à <strong>11h00</strong>, place au soin des cheveux pour se faire chouchouter.</p>
+                    <div class="detail">💡 Prépare-toi à être surprise par le jeu que j'ai choisi !</div>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 3 -->
+            <div class="step-card" id="step3" data-step="3">
+                <div class="step-header">
+                    <span class="step-number">ÉTAPE 03</span>
+                    <span class="step-time">11:55 - 12:30</span>
+                </div>
+                <div class="clue-box">Les estomacs vont commencer à réclamer justice. Ce sera gourmand et partagé.</div>
+                <button class="reveal-btn" onclick="reveal('step3')">🔓 Débloquer l'indice</button>
+                <div class="secret-content">
+                    <h3><span class="emoji">🍽️</span> La Cuisine Ensemble</h3>
+                    <p>À <strong>11h55</strong>, on enfile les tabliers ! Préparation du repas à quatre mains, suivi d'un déjeuner savoureux. Les recettes ? Des surprises !</p>
+                    <div class="detail">💡 Un plat que tu aimes particulièrement sera au menu !</div>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 4 -->
+            <div class="step-card" id="step4" data-step="4">
+                <div class="step-header">
+                    <span class="step-number">ÉTAPE 04</span>
+                    <span class="step-time">13:00 - 13:30</span>
+                </div>
+                <div class="clue-box">Un rythme, deux cœurs, une date à retenir.</div>
+                <button class="reveal-btn" onclick="reveal('step4')">🔓 Ouvrir le dossier</button>
+                <div class="secret-content">
+                    <h3><span class="emoji">💃</span> La Danse pour le 30 Décembre</h3>
+                    <p>Apprenons une chorégraphie ensemble ! Ce sera notre petite signature pour la grande fête du <strong>30 décembre</strong>. Que celui qui a deux pieds gauches ne s'inquiète pas !</p>
+                    <div class="detail">💡 La playlist est prête, on va s'amuser !</div>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 5 -->
+            <div class="step-card" id="step5" data-step="5">
+                <div class="step-header">
+                    <span class="step-number">ÉTAPE 05</span>
+                    <span class="step-time">13:45 - 14:30</span>
+                </div>
+                <div class="clue-box">Le cinéma, version cocon.</div>
+                <button class="reveal-btn" onclick="reveal('step5')">🔓 Ouvrir le dossier</button>
+                <div class="secret-content">
+                    <h3><span class="emoji">🎬</span> Film au Chaud</h3>
+                    <p>À <strong>13h45</strong>, installez-vous confortablement pour une séance de cinéma à la maison. Popcorn et boissons chaudes seront de la partie !</p>
+                    <div class="detail">💡 Le film ? Une comédie romantique, bien sûr !</div>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 6 -->
+            <div class="step-card" id="step6" data-step="6">
+                <div class="step-header">
+                    <span class="step-number">ÉTAPE 06</span>
+                    <span class="step-time">14:45 — ∞</span>
+                </div>
+                <div class="clue-box">La liberté, le dernier mot revient à l'aventure.</div>
+                <button class="reveal-btn" onclick="reveal('step6')">🔓 Ouvrir le dossier</button>
+                <div class="secret-content">
+                    <h3><span class="emoji">🌿</span> Temps Libre</h3>
+                    <p>À partir de <strong>14h45</strong>, c'est le moment de lâcher prise. La nature décidera du reste ! Balade, discussion, sieste ou jeu improvisé... Laissez-vous guider par l'instant.</p>
+                    <div class="detail">💡 Une surprise t'attend peut-être au détour d'un chemin...</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let revealedCount = 0;
+        const totalSteps = 6;
+
+        function openLetter() {
+            const container = document.getElementById('mainContainer');
+            container.classList.add('letter-opened');
+            
+            setTimeout(() => {
+                document.getElementById('envelopeWrapper').style.display = 'none';
+                document.getElementById('letterContent').style.display = 'block';
+                document.getElementById('continueBtn').classList.add('show');
+                
+                // Petit effet sonore visuel
+                document.getElementById('letterContent').style.animation = 'none';
+                setTimeout(() => {
+                    document.getElementById('letterContent').style.animation = 'slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                }, 10);
+            }, 500);
+        }
+
+        function showMission() {
+            document.getElementById('letterContent').classList.add('hidden');
+            document.getElementById('continueBtn').style.display = 'none';
+            document.getElementById('missionInterface').classList.add('visible');
+            
+            setTimeout(() => {
+                document.getElementById('missionInterface').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 150);
+        }
+
+        function reveal(stepId) {
+            const card = document.getElementById(stepId);
+            if (card.classList.contains('revealed')) return;
+            
+            card.classList.add('revealed');
+            revealedCount++;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = (revealedCount / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressCount').textContent = revealedCount + ' / ' + totalSteps;
+        }
+
+        // Initialisation
+        updateProgress();
+    </script>
+
+</body>
+  </html>
